@@ -1,0 +1,168 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# Dataset
+
+```{r}
+# Kaggle Link: https://www.kaggle.com/datasets/adilshamim8/student-performance-and-learning-style?select=student_performance_large_dataset.csv
+# Original Dataset: https://drive.google.com/file/d/1pQWl4_Chfx3jft8dMIXZrKmIwwf6jo3W/view?usp=drive_link
+# Filtered Dataset 300 Sample: https://drive.google.com/file/d/1FmsllokrC1YKOdd5HrQe4SgYEgnKV76l/view?usp=drive_link
+```
+
+```{r}
+# Read CSV from a URL
+# url <- "https://drive.google.com/uc?export=download&id=1FmsllokrC1YKOdd5HrQe4SgYEgnKV76l"
+url <- "https://drive.google.com/uc?export=download&id=1pQWl4_Chfx3jft8dMIXZrKmIwwf6jo3W"
+df <- read.csv(url)
+
+
+df$Final_Grade <- as.factor(df$Final_Grade)
+
+# View first few rows
+head(df)
+```
+# Data Exploration
+
+```{r}
+summary(df)
+```
+# Univariate Exploaration
+
+
+```{r}
+# Univariate Plots
+# Histogram (Distribution of a Numeric Variable)
+
+
+# Histogram of Age
+hist(df$Age, 
+     main="Histogram of Age", 
+     col="red", 
+     xlab="Age", 
+     border="black")
+
+
+# Histogram of Study_Hours_per_Week
+hist(df$Study_Hours_per_Week, 
+     main="Histogram of Study_Hours_per_Week", 
+     col="green", 
+     xlab="Study_Hours_per_Week", 
+     border="black")
+
+
+# Histogram of Online_Courses_Completed
+hist(df$Online_Courses_Completed, 
+     main="Histogram of Online_Courses_Completed", 
+     col="blue", 
+     xlab="Online_Courses_Completed", 
+     border="black")
+
+
+# Histogram of Assignment_Completion_Rate
+hist(df$Assignment_Completion_Rate...., 
+     main="Histogram of Assignment_Completion_Rate", 
+     col="yellow", 
+     xlab="Assignment_Completion_Rate", 
+     border="black")
+
+
+# Histogram of Assignment_Completion_Rate
+hist(df$Online_Courses_Completed, 
+     main="Histogram of Assignment_Completion_Rate", 
+     col="yellow", 
+     xlab="Assignment_Completion_Rate", 
+     border="black")
+```
+```{r}
+# Density plot of Petal Length
+# Density Plot (Smooth Distribution)
+plot(density(df$Age), 
+     main="Density Plot of Age", 
+     col="blue", 
+     lwd=2)
+
+# Density Plot (Smooth Distribution)
+plot(density(df$Study_Hours_per_Week), 
+     main="Density Plot of Age", 
+     col="blue", 
+     lwd=2)
+
+# Density Plot (Smooth Distribution)
+plot(density(df$Online_Courses_Completed), 
+     main="Density Plot of Age", 
+     col="blue", 
+     lwd=2)
+```
+
+```{r}
+# Box Plot (Identifying Outliers)
+# Boxplot of Sepal Width
+boxplot(df$Assignment_Completion_Rate...., 
+        main="Box Plot of Sepal Width", 
+        col="orange")
+```
+
+```{r}
+# Count of each species
+table(df$Final_Grade)
+```
+```{r}
+# Bar plot for Species count
+barplot(table(df$Final_Grade), 
+        main="Count of Each Species", 
+        col=c("red", "green", "blue", "pink"))
+```
+```{r}
+# Scatter Plot (Numeric vs. Numeric)
+
+# Map species to colors
+grade_colors <- c("A" = "red", "B" = "green", "C" = "blue", "D" = "pink")
+
+# Scatter plot: Heart Rate vs. Weight
+plot(df$Study_Hours_per_Week, df$Time_Spent_on_Social_Media..hours.week., 
+     main="Scatter Plot of Heart Rate vs Weight",
+     xlab="Heart Rate", ylab="Weight",
+     col=grade_colors[df$Final_Grade], pch=19)
+legend("topright", legend=levels(df$Final_Grade), col=grade_colors, pch=19)
+
+
+
+# Scatter plot: Heart Rate vs. Weight
+plot(df$Study_Hours_per_Week, df$Exam_Score...., 
+     main="Scatter Plot of Heart Rate vs Weight",
+     xlab="Heart Rate", ylab="Weight",
+     col=grade_colors[df$Final_Grade], pch=19)
+legend("topright", legend=levels(df$Final_Grade), col=grade_colors, pch=19)
+```
+
+
+
+
+
+
+
+```{r}
+# Basic scatter plot: ColumnX vs ColumnY
+plot(df$Study_Hours_per_Week, df$Exam_Score....,
+     main = "Scatter Plot of ColumnX vs ColumnY",
+     xlab = "ColumnX", ylab = "ColumnY",
+     col = as.factor(df$Final_Grade), pch = 19)
+
+legend("topright", legend = levels(as.factor(df$Final_Grade)), 
+       col = 1:length(unique(df$Final_Grade)), pch = 19)
+```
+
+
+
+
+
+
+
+
+
+
+
+
