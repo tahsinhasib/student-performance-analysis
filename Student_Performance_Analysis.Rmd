@@ -1,158 +1,689 @@
 ---
-title: "R Notebook"
+title: "Group - 06 Mid Project"
 output: html_notebook
 ---
 
+## Dataset Preparation
 
-# Dataset
-
-```{r}
-# Kaggle Link: https://www.kaggle.com/datasets/adilshamim8/student-performance-and-learning-style?select=student_performance_large_dataset.csv
-# Original Dataset: https://drive.google.com/file/d/1pQWl4_Chfx3jft8dMIXZrKmIwwf6jo3W/view?usp=drive_link
-# Filtered Dataset 300 Sample: https://drive.google.com/file/d/1FmsllokrC1YKOdd5HrQe4SgYEgnKV76l/view?usp=drive_link
+```
+First, the dataset was collected from Kaggle, specifically from a dataset titled "Student Performance and Learning Style." Following that, it reads the dataset directly from a Google Drive link. The link is modified to allow direct download by using the uc?export=download parameter, and the read.csv() function is used to load the data into a data frame named df. After successfully loading the dataset, the head(df) function is used to display the first few rows of the data. This step ensures that the dataset has been correctly imported and allows for an initial examination of the variables and their values before proceeding with further analysis.
 ```
 
 ```{r}
-# Read CSV from a URL
-# url <- "https://drive.google.com/uc?export=download&id=1FmsllokrC1YKOdd5HrQe4SgYEgnKV76l"
-url <- "https://drive.google.com/uc?export=download&id=1pQWl4_Chfx3jft8dMIXZrKmIwwf6jo3W"
+
+# ─── Dataset Link ─────────────────────────────────────────────────────────────────────
+# Kaggle Link: https://www.kaggle.com/datasets/adilshamim8/student-performance-and-learning-style?select=student_performance_large_dataset.csv
+
+# ─── Read CSV ─────────────────────────────────────────────────────────────────────────
+
+url <- "https://drive.google.com/uc?export=download&id=1GxUZHi0re31MsCLk4-Vcao9drioIdbRd"
 df <- read.csv(url)
 
+# ─── View first few rows ───────
 
-df$Final_Grade <- as.factor(df$Final_Grade)
-
-# View first few rows
 head(df)
-```
-# Data Exploration
 
+```
 ```{r}
+
+# ─── Summary Statistics ─────────
+
 summary(df)
-```
-# Univariate Exploaration
 
-
-```{r}
-# Univariate Plots
-# Histogram (Distribution of a Numeric Variable)
-
-
-# Histogram of Age
-hist(df$Age, 
-     main="Histogram of Age", 
-     col="red", 
-     xlab="Age", 
-     border="black")
-
-
-# Histogram of Study_Hours_per_Week
-hist(df$Study_Hours_per_Week, 
-     main="Histogram of Study_Hours_per_Week", 
-     col="green", 
-     xlab="Study_Hours_per_Week", 
-     border="black")
-
-
-# Histogram of Online_Courses_Completed
-hist(df$Online_Courses_Completed, 
-     main="Histogram of Online_Courses_Completed", 
-     col="blue", 
-     xlab="Online_Courses_Completed", 
-     border="black")
-
-
-# Histogram of Assignment_Completion_Rate
-hist(df$Assignment_Completion_Rate...., 
-     main="Histogram of Assignment_Completion_Rate", 
-     col="yellow", 
-     xlab="Assignment_Completion_Rate", 
-     border="black")
-
-
-# Histogram of Assignment_Completion_Rate
-hist(df$Online_Courses_Completed, 
-     main="Histogram of Assignment_Completion_Rate", 
-     col="yellow", 
-     xlab="Assignment_Completion_Rate", 
-     border="black")
-```
-```{r}
-# Density plot of Petal Length
-# Density Plot (Smooth Distribution)
-plot(density(df$Age), 
-     main="Density Plot of Age", 
-     col="blue", 
-     lwd=2)
-
-# Density Plot (Smooth Distribution)
-plot(density(df$Study_Hours_per_Week), 
-     main="Density Plot of Age", 
-     col="blue", 
-     lwd=2)
-
-# Density Plot (Smooth Distribution)
-plot(density(df$Online_Courses_Completed), 
-     main="Density Plot of Age", 
-     col="blue", 
-     lwd=2)
 ```
 
 ```{r}
-# Box Plot (Identifying Outliers)
-# Boxplot of Sepal Width
-boxplot(df$Assignment_Completion_Rate...., 
-        main="Box Plot of Sepal Width", 
-        col="orange")
-```
+# ─── Count of final grade ─────────
 
-```{r}
-# Count of each species
 table(df$Final_Grade)
 ```
 ```{r}
-# Bar plot for Species count
-barplot(table(df$Final_Grade), 
-        main="Count of Each Species", 
-        col=c("red", "green", "blue", "pink"))
-```
-```{r}
-# Scatter Plot (Numeric vs. Numeric)
 
-# Map species to colors
-grade_colors <- c("A" = "red", "B" = "green", "C" = "blue", "D" = "pink")
+# ─── Viewing column names ─────────
 
-# Scatter plot: Heart Rate vs. Weight
-plot(df$Study_Hours_per_Week, df$Time_Spent_on_Social_Media..hours.week., 
-     main="Scatter Plot of Heart Rate vs Weight",
-     xlab="Heart Rate", ylab="Weight",
-     col=grade_colors[df$Final_Grade], pch=19)
-legend("topright", legend=levels(df$Final_Grade), col=grade_colors, pch=19)
+colnames(df)
 
-
-
-# Scatter plot: Heart Rate vs. Weight
-plot(df$Study_Hours_per_Week, df$Exam_Score...., 
-     main="Scatter Plot of Heart Rate vs Weight",
-     xlab="Heart Rate", ylab="Weight",
-     col=grade_colors[df$Final_Grade], pch=19)
-legend("topright", legend=levels(df$Final_Grade), col=grade_colors, pch=19)
 ```
 
 
+# Part - 2: Handling Missing Values 
 
 
+## Injection Part
+### Injecting Missing Values
 
-
+```
+First, a custom function named <code>inject_na()</code> is defined. This function takes a column from the data and a percentage value as input. It calculates how many data points need to be replaced with NA based on the specified percentage, randomly selects those positions within the column, and replaces the selected values with NA. The modified column is then returned. After defining the function, it is applied to specific columns in the dataset, such as Age, Exam_Score...., Assignment_Completion_Rate...., Preferred_Learning_Style, and Study_Hours_per_Week, injecting between 10% to 15% missing values into each.
+```
 
 ```{r}
-# Basic scatter plot: ColumnX vs ColumnY
-plot(df$Study_Hours_per_Week, df$Exam_Score....,
-     main = "Scatter Plot of ColumnX vs ColumnY",
-     xlab = "ColumnX", ylab = "ColumnY",
-     col = as.factor(df$Final_Grade), pch = 19)
 
-legend("topright", legend = levels(as.factor(df$Final_Grade)), 
-       col = 1:length(unique(df$Final_Grade)), pch = 19)
+# ─── Custom function to inject missing values into a column ────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────── uncomment/comment
+inject_na <- function(column, percent = 0.1) {
+  n <- floor(length(column) * percent)            # Number of values to replace with NA
+  idx <- sample(seq_along(column), n)             # Randomly pick n positions
+  column[idx] <- NA                               # Replace selected values with NA
+  return(column)                                  # Return modified column
+}
+
+
+# ─── Inject missing values into selected columns of Original DataFrame ────────────────────────────────────────────────
+
+df$Age <- inject_na(df$Age, percent = 0.1)                                                           # 10% missing
+df$Exam_Score....<- inject_na(df$Exam_Score...., percent = 0.1)                                      # 10% missing
+df$Assignment_Completion_Rate.... <- inject_na(df$Assignment_Completion_Rate....,percent = 0.15)     # 15% missing
+df$Preferred_Learning_Style <- inject_na(df$Preferred_Learning_Style, percent = 0.1)                 # 10% missing
+df$Study_Hours_per_Week <- inject_na(df$Study_Hours_per_Week, percent = 0.1)                         # 10% missing
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────── uncomment/comment
+
+
+# ─── View some of the data to confirm ───────────────────────────────────────────────────────────────
+
+head(df)
+
+# ─── Optional: Writing the csv in directory ─────────────────────────────────────────────────────────
+# write.csv(df, "StudentPerformance_Dataset_with_missing_values.csv", row.names = FALSE)
+
+```
+
+```{r}
+
+# ─── Check to confirm there are no more missing values ─────────────────────────────────────────────────────────
+
+colSums(is.na(df))
+
+```
+
+### Handling Missing values with medians and modes
+
+```
+Firstly, median imputation is applied to numerical columns such as Age, Exam_Score...., and Assignment_Completion_Rate..... Here, missing values in these columns are replaced with the median of the non-missing values to ensure that outliers have minimal impact on the imputed data. Secondly, for categorical data like Preferred_Learning_Style, mode imputation is used. A custom get_mode() function is defined to find the most frequently occurring value in the column, which is then used to fill in the missing entries. Thirdly, mean imputation is performed on the Study_Hours_per_Week column, where missing values are replaced with the mean of the existing values. After all imputation steps, colSums(is.na(df)) is used to confirm that there are no remaining missing values.
+```
+
+
+```{r}
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────── uncomment/comment
+# ─── 1. Median Imputation (Numerical Columns) ─────────────────────────────────────────────────────────
+
+df$Age[is.na(df$Age)] <- median(df$Age, na.rm = TRUE) # Impute missing Age values
+df$Exam_Score....[is.na(df$Exam_Score....)] <- median(df$Exam_Score...., na.rm = TRUE) # Impute missing Exam_Score values
+df$Assignment_Completion_Rate....[is.na(df$Assignment_Completion_Rate....)] <- median(df$Assignment_Completion_Rate...., na.rm = TRUE) # Impute missing Assignment_Completion_Rate values
+
+
+# ─── 2. Mode Imputation (Categorical Column) ─────────────────────────────────────────────────────────
+# ─── Mode function ────────────────────────────────────────────────────
+
+get_mode <- function(x) {
+  uniqx <- na.omit(unique(x))
+  uniqx[which.max(tabulate(match(x, uniqx)))]
+}
+
+df$Preferred_Learning_Style[is.na(df$Preferred_Learning_Style)] <- get_mode(df$Preferred_Learning_Style) # Impute missing Preferred_Learning_Style values
+
+
+
+
+# ─── 3. Mean Imputation (Numerical Columns) ─────────────────────────────────────────────────────────
+
+df$Study_Hours_per_Week[is.na(df$Study_Hours_per_Week)] <- mean(df$Study_Hours_per_Week, na.rm = TRUE)
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────── uncomment/comment
+
+
+# ─── View the cleaned data and optionally save it ─────────────────────────────────────────────────────────
+
+colSums(is.na(df))                                      # Check to confirm there are no more missing values
+
+# ─── Save the cleaned dataset ──────────────────────────────────────────────
+# write.csv(df, "StudentPerformance_Dataset_Cleaned.csv", row.names = FALSE)
+
+```
+
+# Injecting Outliers (Also done in Part 5)
+
+```
+A custom function named inject_outliers_percent() is created to artificially introduce outliers into specific numeric columns of the dataset. The function accepts three parameters: the target column, the percentage of values to be altered, and a specified range from which the outlier values are randomly generated. Inside the function, a number of random indices are selected based on the specified percentage, and at these positions, random values within the given range are injected. After defining the function, outliers are added to four key columns: Age, Study_Hours_per_Week, Exam_Score...., and Time_Spent_on_Social_Media..hours.week.. For each column, about 3% of the data points are replaced with unusually high values drawn from a specified range (for example, 60–80 years for age and 150–200 for exam scores).
+```
+
+```{r}
+
+
+# ─── Function to inject outliers into a numeric column ──────────────────────────────────────────────
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────── uncomment/comment
+inject_outliers_percent <- function(column, percent = 0.05, range = c(150, 200)) {
+  n <- floor(length(column) * percent)                     # How many outliers to inject
+  idx <- sample(seq_along(column), n)                      # Random indices to inject
+  column[idx] <- runif(n, min = range[1], max = range[2])  # Inject values within range
+  return(column)
+}
+
+
+
+# ─── Inject outliers with custom percent and range ──────────────────────────────────────────────────────────────────────
+
+df$Age <- inject_outliers_percent(df$Age, percent = 0.03, range = c(60, 80))
+df$Study_Hours_per_Week <- inject_outliers_percent(df$Study_Hours_per_Week, percent = 0.03, range = c(100, 120))
+df$Exam_Score.... <- inject_outliers_percent(df$Exam_Score...., percent = 0.03, range = c(150, 200))
+df$Time_Spent_on_Social_Media..hours.week. <- inject_outliers_percent(df$Time_Spent_on_Social_Media..hours.week., percent = 0.03, range = c(70, 90))
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────── uncomment/comment
+
+```
+
+```{r}
+
+# ─── Display first few rows after injecting outliers ─────────────
+
+head(df)
+
+```
+
+
+
+## Sampling
+
+```{r}
+
+# ─── Set seed for reproducibility ──────────────────
+
+set.seed(123)
+
+# ─── Comment/Uncomment the below line to experiment with sample ────────────────────────────────────
+
+df <- df[sample(nrow(df), 150, replace = FALSE),]     # Sample 20 rows randomly from the full dataset
+
+```
+
+
+# Part - 1: Data Exploration
+
+
+## Univariate Exploration
+### Histogram
+```{r}
+
+# ─── Univariate Plots ──────────────────
+# ─── df indicates full dataset with 10,000 records unless sampled [example: df$Age] ──────────────────
+
+
+# ─── For displaying in a single plot comment/uncomment below code ──────────────────
+# par(mfrow = c(2, 4))  # 2 rows, 4 columns for plots
+
+
+# ─── Histogram (Distribution of a Numeric Variable) ────────────────────────────────────────────────────────────────
+
+par(mfrow = c(2, 3))  # 2 rows, 3 columns
+
+hist(df$Age, 
+     main= "Histogram of Age", xlab="Age", col= "lightblue", cex.main = .9)
+hist(df$Study_Hours_per_Week, 
+     main= "Histogram of Study Hours per Week", xlab="Study Hours per Week", col= "lightgreen", cex.main = .9)
+hist(df$Online_Courses_Completed, 
+     main= "Histogram of Online Courses Completed", xlab="Online Courses Completed", col= "lightcoral", cex.main = .9)
+hist(df$`Assignment_Completion_Rate....`, 
+     main= "Histogram of Assignment Completion Rate (%)", xlab="Assignment Completion Rate (%)", col= "purple", cex.main = .9)
+hist(df$`Exam_Score....`, 
+     main= "Histogram of Exam Score (%)", xlab="Exam Score (%)", col = "cyan", cex.main = .9)
+hist(df$`Attendance_Rate....`, 
+     main= "Histogram of Attendance Rate (%)", xlab="Attendance Rate (%)", col= "gold", cex.main = .9)
+
+title("Histograms", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+hist(df$`Time_Spent_on_Social_Media..hours.week.`, 
+     main= "Histogram of Social Media Time (hrs/week)", xlab="Social Media Time (hrs/week)", col= "skyblue", cex.main = .9)
+hist(df$Sleep_Hours_per_Night, 
+     main = "Histogram of Sleep Hours per Night", xlab="Sleep Hours per Night", col= "seagreen", cex.main = .9)
+
+
+title("Histograms", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+```
+
+# Density Plot
+```{r}
+
+# ─── Density plot (Smooth Distribution) ────────────────────────────────────────────────────────────────────────
+
+par(mfrow = c(2, 3))  # 2 rows, 3 columns
+
+plot(density(df$Age), main="Age", col="blue", lwd=2, cex.main = .9)
+plot(density(df$Study_Hours_per_Week), main="Study Hours per Week", col="green", lwd=2, cex.main = .9)
+plot(density(df$Online_Courses_Completed), main="Online Courses Completed", col="red", lwd=2, cex.main = .9)
+plot(density(df$`Assignment_Completion_Rate....`), main="Assignment Completion Rate....", col="purple", lwd=2, cex.main = .9)
+plot(density(df$`Exam_Score....`), main="Exam Score....", col="orange", lwd=2, cex.main = .9)
+plot(density(df$`Attendance_Rate....`), main="Attendance Rate....", col="brown", lwd=2, cex.main = .9)
+
+title("Density Plots", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+plot(density(df$`Time_Spent_on_Social_Media..hours.week.`), main="Time Spent on Social Media..hours.week.", col="pink", lwd=2, cex.main = .9)
+plot(density(df$Sleep_Hours_per_Night), main="Sleep Hours per Night", col="cyan", lwd=2, cex.main = .9)
+
+title("Density Plots", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+```
+
+
+# Boxplot
+```{r}
+
+# ─── Box Plot (Identifying Outliers) ────────────────────────────────────────────────────────────────────────
+
+par(mfrow = c(2, 3))  # 2 rows, 3 columns
+
+boxplot(df$Age, main = "Age", col = "lightblue", ylab = "Age", cex.main = .9)
+boxplot(df$Study_Hours_per_Week, main = "Study Hours per Week", col = "lightgreen", cex.main = .9)
+boxplot(df$Online_Courses_Completed, main = "Online Courses Completed", col = "lightcoral", cex.main = .9)
+boxplot(df$`Assignment_Completion_Rate....`, main = "Assignment Completion Rate (%)", col = "plum", cex.main = .9)
+boxplot(df$`Exam_Score....`, main = "BExam Score (%)", col = "skyblue", cex.main = .9)
+boxplot(df$`Attendance_Rate....`, main = "Attendance Rate (%)", col = "gold", cex.main = .9)
+
+title("Boxplots: Features and Final Grade Comparison", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+boxplot(df$`Time_Spent_on_Social_Media..hours.week.`, main = "Time Spent on Social Media (hrs/week)", col = "orange", cex.main = .9)
+boxplot(df$Sleep_Hours_per_Night, main = "Sleep Hours per Night", col = "seagreen", cex.main = .9)
+boxplot(df$Age ~ df$Final_Grade, main="Age vs Final Grade", xlab="Final Grade", ylab="Age", col="lightblue", cex.main = .9)
+boxplot(df$Study_Hours_per_Week ~ df$Final_Grade, 
+        main="Study Hours per Week vs Final Grade", xlab="Final Grade", ylab="Study Hours per Week", col="lightgreen", cex.main = .9)
+boxplot(df$Online_Courses_Completed ~ df$Final_Grade, 
+        main="Online Courses Completed vs Final Grade", xlab="Final Grade", ylab="Online Courses Completed", col="lightcoral", cex.main = .9)
+boxplot(df$`Assignment_Completion_Rate....` ~ df$Final_Grade, 
+        main="Assignment Completion Rate vs Final Grade", xlab="Final Grade", ylab="Assignment Completion Rate", col="lightyellow", cex.main = .9)
+
+title("Boxplots: Features and Final Grade Comparison", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+boxplot(df$`Exam_Score....` ~ df$Final_Grade, 
+        main="Exam Score.... vs Final Grade", xlab="Final Grade", ylab="Exam Score....", col="lightpink", cex.main = .9)
+boxplot(df$`Attendance_Rate....` ~ df$Final_Grade, 
+        main="Attendance Rate.... vs Final Grade", xlab="Final Grade", ylab="Attendance Rate....", col="lightseagreen", cex.main = .9)
+boxplot(df$`Time_Spent_on_Social_Media..hours.week.` ~ df$Final_Grade, 
+        main="Time Spent on Social Media vs Final Grade", xlab="Final Grade", ylab="Time Spent on Social Media", col="lightsteelblue", cex.main = .9)
+boxplot(df$Sleep_Hours_per_Night ~ df$Final_Grade, 
+        main="Sleep Hours per Night vs Final Grade", xlab="Final Grade", ylab="Sleep Hours per Night", col="lightgoldenrodyellow", cex.main = .9)
+
+
+title("Boxplots: Features and Final Grade Comparison", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+```
+# Exploring Categorical Data
+
+```{r}
+
+# ─── Count of each items ──────────────────────
+table(df$Age)
+table(df$Gender)
+table(df$Study_Hours_per_Week)
+table(df$Preferred_Learning_Style)
+table(df$Online_Courses_Completed)
+
+```
+
+```{r}
+
+par(mfrow = c(2, 3))  # set 2 rows and 3 columns for multiple graphs
+
+barplot(table(df$Age), main = "Count of Age", col = "skyblue", las = 2, cex.main = .9)
+barplot(table(df$Gender), main = "Count of Gender", col = "salmon", las = 2, cex.main = .9)
+barplot(table(df$Study_Hours_per_Week), main = "Count of Study Hours", col = "lightgreen", las = 2, cex.main = .9)
+barplot(table(df$Preferred_Learning_Style), main = "Count of Learning Style", col = "plum", las = 2, cex.main = .9)
+barplot(table(df$Online_Courses_Completed), main = "Count of Online Courses Completed", col = "orange", las = 2, cex.main = .9)
+
+title("Total Counts", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+```
+
+
+
+
+# Barplot
+```{r}
+
+# ─── Bar Plot ──────────────────────
+
+par(mfrow = c(2, 3))  # set 2 rows and 3 columns for multiple graphs
+
+barplot(table(df$Gender), 
+        main = "Bar Plot of Gender", col = c("pink", "lightblue"), xlab = "Gender", ylab = "Count", cex.main = .9)
+barplot(table(df$Preferred_Learning_Style), 
+        main = "Bar Plot of Preferred Learning Style", col = "lightgreen", xlab = "Learning Style", ylab = "Count", cex.main = .9)
+barplot(table(df$Participation_in_Discussions),
+        main = "Bar Plot of Participation in Discussions", col = "lightcoral", xlab = "Discussion Participation", ylab = "Count", cex.main = .9)
+barplot(table(df$Use_of_Educational_Tech),
+        main = "Bar Plot of Use of Educational Tech", col = "purple", xlab = "Use of Tech", ylab = "Count", cex.main = .9)
+barplot(table(df$Self_Reported_Stress_Level),
+        main = "Bar Plot of Self Reported Stress Level", col = "tomato", xlab = "Stress Level", ylab = "Count", cex.main = .9)
+barplot(table(df$Final_Grade),
+        main = "Bar Plot of Final Grade", col = "skyblue", xlab = "Final Grade", ylab = "Count", cex.main = .9)
+
+title("Bar Plots", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+```
+
+#  Multivariate analysis
+
+# Scatter plot
+
+```{r}
+
+# ─── Convert Final_Grade to factor ──────────────────────
+
+df$Final_Grade <- as.factor(df$Final_Grade)
+
+
+# ─── Define color mapping based on Final Grade ──────────────────────
+
+colors <- c("blue", "red", "green", "purple")
+
+```
+
+```{r}
+
+par(mfrow = c(2, 3))  # set 2 rows and 3 columns for multiple graphs
+
+
+
+
+
+# ─── Scatter plot: Age vs Online Courses Completed, colored by Final Grade ──────────────────────
+
+plot(df$Age, df$Online_Courses_Completed, 
+     main="Age vs Online Courses Completed", cex.main = 0.9, 
+     xlab="Age", ylab="Online Courses Completed", col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+
+
+
+
+
+# ─── Scatter plot: Age vs Time Spent on Social Media..hours.week., colored by Final Grade ──────────────────────
+
+plot(df$Age, df$`Time_Spent_on_Social_Media..hours.week.`, 
+     main="Age vs Time Spent on Social Media..hours.week.", cex.main = 0.9, 
+     xlab="Age", ylab="Time Spent on Social Media..hours.week.", 
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+
+
+
+
+
+# ─── Scatter plot: Study_Hours_per_Week vs Online_Courses_Completed ────────────────────── 
+
+plot(df$Study_Hours_per_Week, df$Online_Courses_Completed,
+     main="Study Hours vs Online Courses Completed", cex.main = 0.9, 
+     xlab="Study Hours per Week", ylab="Online Courses Completed",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+# ─── Scatter plot: Study_Hours_per_Week vs Assignment_Completion_Rate.... ──────────────────────
+
+plot(df$Study_Hours_per_Week, df$`Assignment_Completion_Rate....`,
+     main="Study Hours vs Assignment Completion Rate", cex.main = 0.9, 
+     xlab="Study Hours per Week", ylab="Assignment Completion Rate",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+# ─── Scatter plot: Study_Hours_per_Week vs Exam_Score.... ──────────────────────
+
+plot(df$Study_Hours_per_Week, df$`Exam_Score....`,
+     main="Study Hours vs Exam Score", cex.main = 0.9, 
+     xlab="Study Hours per Week", ylab="Exam Score",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+# ─── Scatter plot: Study_Hours_per_Week vs Attendance_Rate.... ──────────────────────
+
+plot(df$Study_Hours_per_Week, df$`Attendance_Rate....`,
+     main="Study Hours vs Attendance Rate", cex.main = 0.9, 
+     xlab="Study Hours per Week", ylab="Attendance Rate",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+# ─── Scatter plot: Study_Hours_per_Week vs Time_Spent_on_Social_Media..hours.week. ──────────────────────
+
+plot(df$Study_Hours_per_Week, df$`Time_Spent_on_Social_Media..hours.week.`,
+     main="Study Hours vs Time on Social Media", cex.main = 0.9, 
+     xlab="Study Hours per Week", ylab="Time on Social Media (hrs/week)",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+
+# ─── Scatter plot: Study_Hours_per_Week vs Sleep_Hours_per_Night ──────────────────────
+
+plot(df$Study_Hours_per_Week, df$Sleep_Hours_per_Night,
+     main="Study Hours vs Sleep Hours", cex.main = 0.9, 
+     xlab="Study Hours per Week", ylab="Sleep Hours per Night",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),col=colors, pch=19)
+
+
+
+# ─── Scatter: Online_Courses_Completed vs Exam_Score.... ──────────────────────
+
+plot(df$Online_Courses_Completed, df$`Exam_Score....`,
+     main="Online Courses Completed vs Exam Score", cex.main = 0.9, 
+     xlab="Online Courses Completed", ylab="Exam Score",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+
+# ─── Scatter: Online_Courses_Completed vs Sleep_Hours_per_Night ──────────────────────
+
+plot(df$Online_Courses_Completed, df$Sleep_Hours_per_Night,
+     main="Online Courses Completed vs Sleep Hours per Night", cex.main = 0.9, 
+     xlab="Online Courses Completed", ylab="Sleep Hours per Night",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Assignment_Completion_Rate.... vs Study_Hours_per_Week ──────────────────────
+
+plot(df$`Assignment_Completion_Rate....`, df$Study_Hours_per_Week,
+     main="Assignment Completion Rate vs Study Hours per Week", cex.main = 0.9, 
+     xlab="Assignment Completion Rate", ylab="Study Hours per Week",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Assignment_Completion_Rate.... vs Online_Courses_Completed ──────────────────────
+
+plot(df$`Assignment_Completion_Rate....`, df$Online_Courses_Completed,
+     main="Assignment Completion Rate vs Online Courses Completed", cex.main = 0.9, 
+     xlab="Assignment Completion Rate", ylab="Online Courses Completed",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Assignment_Completion_Rate.... vs Exam_Score.... ──────────────────────
+
+plot(df$`Assignment_Completion_Rate....`, df$`Exam_Score....`,
+     main="Assignment Completion Rate vs Exam Score", cex.main = 0.9, 
+     xlab="Assignment Completion Rate", ylab="Exam Score",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Assignment_Completion_Rate.... vs Attendance_Rate.... ──────────────────────
+
+plot(df$`Assignment_Completion_Rate....`, df$`Attendance_Rate....`,
+     main="Assignment Completion Rate vs Attendance Rate", cex.main = 0.9, 
+     xlab="Assignment Completion Rate", ylab="Attendance Rate",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Assignment_Completion_Rate.... vs Time_Spent_on_Social_Media..hours.week. ──────────────────────
+
+plot(df$`Assignment_Completion_Rate....`, df$`Time_Spent_on_Social_Media..hours.week.`,
+     main="Assignment Completion Rate vs Time on Social Media", cex.main = 0.9, 
+     xlab="Assignment Completion Rate", ylab="Time on Social Media (hrs/week)",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Assignment_Completion_Rate.... vs Sleep_Hours_per_Night ──────────────────────
+
+plot(df$`Assignment_Completion_Rate....`, df$Sleep_Hours_per_Night,
+     main="Assignment Completion Rate vs Sleep Hours per Night", cex.main = 0.9, 
+     xlab="Assignment Completion Rate", ylab="Sleep Hours per Night",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Exam_Score.... vs Study_Hours_per_Week ──────────────────────
+
+plot(df$`Exam_Score....`, df$Study_Hours_per_Week,
+     main="Exam Score vs Study Hours per Week", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Study Hours per Week",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Exam_Score.... vs Online_Courses_Completed ──────────────────────
+
+plot(df$`Exam_Score....`, df$Online_Courses_Completed,
+     main="Exam Score vs Online Courses Completed", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Online Courses Completed",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Exam_Score.... vs Assignment_Completion_Rate.... ──────────────────────
+
+plot(df$`Exam_Score....`, df$`Assignment_Completion_Rate....`,
+     main="Exam Score vs Assignment Completion Rate", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Assignment Completion Rate",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Exam_Score.... vs Attendance_Rate.... ──────────────────────
+
+plot(df$`Exam_Score....`, df$`Attendance_Rate....`,
+     main="Exam Score vs Attendance Rate", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Attendance Rate",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Exam_Score.... vs Time_Spent_on_Social_Media..hours.week. ──────────────────────
+
+plot(df$`Exam_Score....`, df$`Time_Spent_on_Social_Media..hours.week.`,
+     main="Exam Score vs Time on Social Media", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Time on Social Media (hrs/week)",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Exam_Score.... vs Sleep_Hours_per_Night ──────────────────────
+
+plot(df$`Exam_Score....`, df$Sleep_Hours_per_Night,
+     main="Exam Score vs Sleep Hours per Night", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Sleep Hours per Night",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Attendance_Rate.... vs Study_Hours_per_Week ──────────────────────
+
+plot(df$`Attendance_Rate....`, df$Study_Hours_per_Week,
+     main="Attendance Rate vs Study Hours per Week", cex.main = 0.9, 
+     xlab="Attendance Rate", ylab="Study Hours per Week",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Attendance_Rate.... vs Assignment_Completion_Rate.... ──────────────────────
+
+plot(df$`Attendance_Rate....`, df$`Assignment_Completion_Rate....`,
+     main="Attendance Rate vs Assignment Completion Rate", cex.main = 0.9, 
+     xlab="Attendance Rate", ylab="Assignment Completion Rate",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Attendance_Rate.... vs Exam_Score.... ──────────────────────
+
+plot(df$`Attendance_Rate....`, df$`Exam_Score....`,
+     main="Attendance Rate vs Exam Score", cex.main = 0.9, 
+     xlab="Attendance Rate", ylab="Exam Score",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Attendance_Rate.... vs Online_Courses_Completed ──────────────────────
+
+plot(df$`Attendance_Rate....`, df$Online_Courses_Completed,
+     main="Attendance Rate vs Online Courses Completed", cex.main = 0.9,
+     xlab="Attendance Rate", ylab="Online Courses Completed",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Attendance_Rate.... vs Time_Spent_on_Social_Media..hours.week. ──────────────────────
+
+plot(df$`Attendance_Rate....`, df$`Time_Spent_on_Social_Media..hours.week.`,
+     main="Attendance Rate vs Time on Social Media", cex.main = 0.9, 
+     xlab="Attendance Rate", ylab="Time on Social Media (hrs/week)",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Attendance_Rate.... vs Sleep_Hours_per_Night ──────────────────────
+
+plot(df$`Attendance_Rate....`, df$Sleep_Hours_per_Night,
+     main="Attendance Rate vs Sleep Hours per Night", cex.main = 0.9, 
+     xlab="Attendance Rate", ylab="Sleep Hours per Night",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+# ─── Scatter: Social Media Time vs Online Courses Completed ──────────────────────
+
+plot(df$`Time_Spent_on_Social_Media..hours.week.`, df$Online_Courses_Completed, 
+     main="Social Media Time vs Online Courses Completed", cex.main = 0.9, 
+     xlab="Time on Social Media (hrs/week)", ylab="Courses Completed",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+
+
+title("Scatter Plots", outer = TRUE, line = -1.2, cex.main = 1.5)
+
 ```
 
 
@@ -160,9 +691,783 @@ legend("topright", legend = levels(as.factor(df$Final_Grade)),
 
 
 
+# Correlation
+```{r}
+
+# ─── Correlation (Numeric vs. Numeric) ──────────────────────
+
+# ─── Correlation: Age with others ───────────────────────────
+
+print("Age with others")
+cor(df$Age, df$Study_Hours_per_Week)
+cor(df$Age, df$Online_Courses_Completed)
+cor(df$Age, df$`Assignment_Completion_Rate....`)
+cor(df$Age, df$`Exam_Score....`)
+cor(df$Age, df$`Attendance_Rate....`)
+cor(df$Age, df$`Time_Spent_on_Social_Media..hours.week.`)
+cor(df$Age, df$Sleep_Hours_per_Night)
+
+
+# ─── Correlation: Study_Hours_per_Week with others ───────────────────────────
+
+print("Study_Hours_per_Week with others")
+cor(df$Study_Hours_per_Week, df$Online_Courses_Completed)
+cor(df$Study_Hours_per_Week, df$`Assignment_Completion_Rate....`)
+cor(df$Study_Hours_per_Week, df$`Exam_Score....`)
+cor(df$Study_Hours_per_Week, df$`Attendance_Rate....`)
+cor(df$Study_Hours_per_Week, df$`Time_Spent_on_Social_Media..hours.week.`)
+cor(df$Study_Hours_per_Week, df$Sleep_Hours_per_Night)
+
+# ─── Correlation: Online_Courses_Completed with others ────────────────────────
+
+print("Online_Courses_Completed with others")
+cor(df$Online_Courses_Completed, df$`Assignment_Completion_Rate....`)
+cor(df$Online_Courses_Completed, df$`Exam_Score....`)
+cor(df$Online_Courses_Completed, df$`Attendance_Rate....`)
+cor(df$Online_Courses_Completed, df$`Time_Spent_on_Social_Media..hours.week.`)
+cor(df$Online_Courses_Completed, df$Sleep_Hours_per_Night)
+
+# ─── Correlation: Assignment_Completion_Rate.... with others ────────────────────────
+
+print("Assignment_Completion_Rate.... with others")
+cor(df$`Assignment_Completion_Rate....`, df$`Exam_Score....`)
+cor(df$`Assignment_Completion_Rate....`, df$`Attendance_Rate....`)
+cor(df$`Assignment_Completion_Rate....`, df$`Time_Spent_on_Social_Media..hours.week.`)
+cor(df$`Assignment_Completion_Rate....`, df$Sleep_Hours_per_Night)
+
+# ─── Correlation: Exam_Score.... with others ──────────────────────────────────
+
+print("Exam_Score.... with others")
+cor(df$`Exam_Score....`, df$`Attendance_Rate....`)
+cor(df$`Exam_Score....`, df$`Time_Spent_on_Social_Media..hours.week.`)
+cor(df$`Exam_Score....`, df$Sleep_Hours_per_Night)
+
+# ─── Correlation: Attendance_Rate.... with others ─────────────────────────────
+
+print("Attendance_Rate.... with others")
+cor(df$`Attendance_Rate....`, df$`Time_Spent_on_Social_Media..hours.week.`)
+cor(df$`Attendance_Rate....`, df$Sleep_Hours_per_Night)
+
+# ─── Correlation: Time_Spent_on_Social_Media..hours.week. with Sleep_Hours ───────────────
+
+print("Time_Spent_on_Social_Media..hours.week. with Sleep_Hours")
+cor(df$`Time_Spent_on_Social_Media..hours.week.`, df$Sleep_Hours_per_Night)
+
+```
+
+```{r}
+# Create a correlation matrix
+cor_matrix <- cor(df[, c(
+  "Age", "Study_Hours_per_Week", "Online_Courses_Completed",
+  "Assignment_Completion_Rate....", "Exam_Score....",
+  "Attendance_Rate....", "Time_Spent_on_Social_Media..hours.week.",
+  "Sleep_Hours_per_Night"
+)], use = "complete.obs")  # handles NA values
+
+# Load the corrplot library
+library(corrplot)
+
+# Plot the heatmap
+corrplot(cor_matrix, method = "color", 
+         type = "upper",        # Show only upper half
+         addCoef.col = "black", # Add correlation coefficients
+         tl.cex = 0.5,           # Text size
+         number.cex = 0.7,       # Number size
+         col = colorRampPalette(c("red", "white", "blue"))(200))  # Red–White–Blue color
+
+```
+
+
+
+
+# Box Plot (Numeric vs. Categorical)
+
+```{r}
+
+# ─── Pair plot (scatter plot matrix) for all numerical columns ──────────────────
+
+pairs(df[, c("Age", 
+             "Study_Hours_per_Week", 
+             "Online_Courses_Completed", 
+             "Assignment_Completion_Rate....", 
+             "Exam_Score....", 
+             "Attendance_Rate....", 
+             "Time_Spent_on_Social_Media..hours.week.", 
+             "Sleep_Hours_per_Night")],
+      col=colors[df$Final_Grade],
+      pch = 19,
+      main = "Pair Plot of All Numerical Variables Colored by Final Grade")
+
+```
+
+
+
+# Using ggplot2 for Enhanced Visualization
+```{r}
+
+# ─── Load ggplot2 ───────────────
+
+library(ggplot2)
+
+```
+
+
+
+# Scatter plot with regression line
+```{r}
 
 
 
 
 
+
+
+# ─── Scatter Plot: Study Hours per Week vs Online Courses Completed ────────────────────────────
+
+ggplot(df, aes(x = Study_Hours_per_Week, y = Online_Courses_Completed, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Study Hours per Week vs Online Courses Completed by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Study Hours per Week vs Assignment Completion Rate ────────────────────────────
+
+ggplot(df, aes(x = Study_Hours_per_Week, y = `Assignment_Completion_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Study Hours per Week vs Assignment Completion Rate by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Study Hours per Week vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = Study_Hours_per_Week, y = `Exam_Score....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Study Hours per Week vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Study Hours per Week vs Attendance Rate ────────────────────────────
+
+ggplot(df, aes(x = Study_Hours_per_Week, y = `Attendance_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Study Hours per Week vs Attendance Rate by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+# ─── Scatter Plot: Study Hours per Week vs Sleep Hours per Night ────────────────────────────
+
+ggplot(df, aes(x = Study_Hours_per_Week, y = Sleep_Hours_per_Night, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Study Hours per Week vs Sleep Hours per Night by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+# ─── Scatter Plot: Online Courses Completed vs Assignment Completion Rate ────────────────────────────
+
+ggplot(df, aes(x = Online_Courses_Completed, y = `Assignment_Completion_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Online Courses Completed vs Assignment Completion Rate by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Online Courses Completed vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = Online_Courses_Completed, y = `Exam_Score....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Online Courses Completed vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Online Courses Completed vs Attendance Rate ────────────────────────────
+
+ggplot(df, aes(x = Online_Courses_Completed, y = `Attendance_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Online Courses Completed vs Attendance Rate by Final Grade") +
+  theme_minimal()
+
+
+
+
+# ─── Scatter Plot: Online Courses Completed vs Sleep Hours per Night ────────────────────────────
+
+ggplot(df, aes(x = Online_Courses_Completed, y = Sleep_Hours_per_Night, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Online Courses Completed vs Sleep Hours per Night by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Assignment Completion Rate vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = `Assignment_Completion_Rate....`, y = Age, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Assignment Completion Rate vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Assignment Completion Rate vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = `Assignment_Completion_Rate....`, y = Study_Hours_per_Week, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Assignment Completion Rate vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Assignment Completion Rate vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = `Assignment_Completion_Rate....`, y = Online_Courses_Completed, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Assignment Completion Rate vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Assignment Completion Rate vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = `Assignment_Completion_Rate....`, y = `Exam_Score....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Assignment Completion Rate vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Assignment Completion Rate vs Attendance Rate ────────────────────────────
+
+ggplot(df, aes(x = `Assignment_Completion_Rate....`, y = `Attendance_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Assignment Completion Rate vs Attendance Rate by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+# ─── Scatter Plot: Assignment Completion Rate vs Sleep Hours per Night ────────────────────────────
+
+ggplot(df, aes(x = `Assignment_Completion_Rate....`, y = Sleep_Hours_per_Night, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Assignment Completion Rate vs Sleep Hours per Night by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+# ─── Scatter Plot: Exam Score vs Study Hours per Week ────────────────────────────
+
+ggplot(df, aes(x = `Exam_Score....`, y = Study_Hours_per_Week, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Exam Score vs Study Hours per Week by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Exam Score vs Online Courses Completed ────────────────────────────
+
+ggplot(df, aes(x = `Exam_Score....`, y = Online_Courses_Completed, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Exam Score vs Online Courses Completed by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Exam Score vs Assignment Completion Rate ────────────────────────────
+ggplot(df, aes(x = `Exam_Score....`, y = `Assignment_Completion_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Exam Score vs Assignment Completion Rate by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Exam Score vs Attendance Rate ────────────────────────────
+
+ggplot(df, aes(x = `Exam_Score....`, y = `Attendance_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Exam Score vs Attendance Rate by Final Grade") +
+  theme_minimal()
+
+
+
+
+# ─── Scatter Plot: Exam Score vs Sleep Hours per Night ────────────────────────────
+
+ggplot(df, aes(x = `Exam_Score....`, y = Sleep_Hours_per_Night, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Exam Score vs Sleep Hours per Night by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+# ─── Scatter Plot: Attendance Rate vs Study Hours per Week ────────────────────────────
+
+ggplot(df, aes(x = `Attendance_Rate....`, y = Study_Hours_per_Week, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Attendance Rate vs Study Hours per Week by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Attendance Rate vs Online Courses Completed ────────────────────────────
+ggplot(df, aes(x = `Attendance_Rate....`, y = Online_Courses_Completed, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Attendance Rate vs Online Courses Completed by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Attendance Rate vs Assignment Completion Rate ────────────────────────────
+
+ggplot(df, aes(x = `Attendance_Rate....`, y = `Assignment_Completion_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Attendance Rate vs Assignment Completion Rate by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Attendance Rate vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = `Attendance_Rate....`, y = `Exam_Score....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Attendance Rate vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+
+
+# ─── Scatter Plot: Attendance Rate vs Sleep Hours per Night ────────────────────────────
+
+ggplot(df, aes(x = `Attendance_Rate....`, y = Sleep_Hours_per_Night, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Attendance Rate vs Sleep Hours per Night by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ─── Scatter Plot: Sleep Hours vs Study Hours per Week ────────────────────────────
+
+ggplot(df, aes(x = Sleep_Hours_per_Night, y = Study_Hours_per_Week, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Sleep Hours vs Study Hours per Week by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Sleep Hours vs Online Courses Completed ────────────────────────────
+
+ggplot(df, aes(x = Sleep_Hours_per_Night, y = Online_Courses_Completed, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Sleep Hours vs Online Courses Completed by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Sleep Hours vs Assignment Completion Rate ────────────────────────────
+
+ggplot(df, aes(x = Sleep_Hours_per_Night, y = `Assignment_Completion_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Sleep Hours vs Assignment Completion Rate by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Sleep Hours vs Exam Score ────────────────────────────
+
+ggplot(df, aes(x = Sleep_Hours_per_Night, y = `Exam_Score....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Sleep Hours vs Exam Score by Final Grade") +
+  theme_minimal()
+
+
+# ─── Scatter Plot: Sleep Hours vs Attendance Rate ────────────────────────────
+
+ggplot(df, aes(x = Sleep_Hours_per_Night, y = `Attendance_Rate....`, color = Final_Grade)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Sleep Hours vs Attendance Rate by Final Grade") +
+  theme_minimal()
+
+
+
+
+
+
+```
+
+## Part - 3: Data Type Conversion 
+
+
+```{r}
+
+# ─── Gender: Male = 1, Female = 0 ────────────────────────────
+
+df$Gender_Numeric <- ifelse(df$Gender == "Male", 1,
+                            ifelse(df$Gender == "Female", 0, NA))
+ 
+
+# ─── Preferred Learning Style: Visual = 1, Auditory = 2, Kinesthetic = 3 ────────────────────────────
+
+df$Preferred_Learning_Style_Numeric <- ifelse(df$Preferred_Learning_Style == "Visual", 1,
+                                       ifelse(df$Preferred_Learning_Style == "Auditory", 2,
+                                       ifelse(df$Preferred_Learning_Style == "Kinesthetic", 3, NA)))
+ 
+
+# ─── Participation in Discussions: Yes = 1, No = 0 ────────────────────────────
+
+df$Participation_in_Discussions_Numeric <- ifelse(df$Participation_in_Discussions == "Yes", 1,
+                                           ifelse(df$Participation_in_Discussions == "No", 0, NA))
+ 
+
+# ─── Use of Educational Tech: Yes = 1, No = 0 ────────────────────────────
+
+df$Use_of_Educational_Tech_Numeric <- ifelse(df$Use_of_Educational_Tech == "Yes", 1,
+                                      ifelse(df$Use_of_Educational_Tech == "No", 0, NA))
+ 
+
+# ─── Self Reported Stress Level: Low = 1, Moderate = 2, High = 3 ────────────────────────────
+
+df$Self_Reported_Stress_Level_Numeric <- ifelse(df$Self_Reported_Stress_Level == "Low", 1,
+                                         ifelse(df$Self_Reported_Stress_Level == "Moderate", 2,
+                                         ifelse(df$Self_Reported_Stress_Level == "High", 3, NA)))
+
+```
+
+
+```{r}
+
+# ─── Display first few rows ────────────────────────────
+
+head(df)
+
+```
+
+
+```{r}
+
+# ─── Display histogram, scatter, boxplots after type conversion ────────────────────────────
+
+par(mfrow = c(2, 3))  # set 2 rows and 3 columns for multiple graphs
+
+
+# ─── Histogram: Prefered Learing Style ──────────────────────
+
+hist(df$Preferred_Learning_Style_Numeric, 
+     main= "Prefered Learning Style Numeric", xlab="Prefered Learing Style", col= "lightgreen", cex.main = .9)
+
+
+# ─── Scatter: Prefered Learing Style vs Exam_Score.... ──────────────────────
+
+plot(df$`Preferred_Learning_Style_Numeric`, df$`Exam_Score....`,
+     main="Attendance Rate vs Exam Score", cex.main = 0.9, 
+     xlab="Attendance Rate", ylab="Exam Score",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+# ─── Box Plot: Prefered Learing Style vs Exam_Score.... ──────────────────────
+
+boxplot(df$`Self_Reported_Stress_Level_Numeric` ~ df$Final_Grade, 
+        main="Self Reported Stress Level Numeric", xlab="Stress Level", ylab="Exam Score....", col="lightpink", cex.main = .9)
+
+title("Boxplots, Histogram, Scatter: Features and Final Grade Comparison", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+```
+## Part - 4: Data Transformation (Scaling, Normalization)
+
+
+```{r}
+
+# ─── Scaling (Z-score Standardization) ──────────────────────────────
+
+df$StudyHours_scaled <- scale(df$Study_Hours_per_Week)
+df$ExamScore_scaled <- scale(df$Exam_Score....)
+df$Attendance_scaled <- scale(df$Attendance_Rate....)
+df$OnlineCourses_scaled  <- scale(df$Online_Courses_Completed)
+
+
+# ─── Normalization (Min-Max Scaling) ───────────────────────────────
+
+df$StudyHours_norm <- (df$Study_Hours_per_Week - min(df$Study_Hours_per_Week, na.rm = TRUE)) /
+                      (max(df$Study_Hours_per_Week, na.rm = TRUE) - min(df$Study_Hours_per_Week, na.rm = TRUE))
+
+df$ExamScore_norm <- (df$Exam_Score.... - min(df$Exam_Score...., na.rm = TRUE)) /
+                     (max(df$Exam_Score...., na.rm = TRUE) - min(df$Exam_Score...., na.rm = TRUE))
+
+df$Attendance_norm <- (df$Attendance_Rate.... - min(df$Attendance_Rate...., na.rm = TRUE)) /
+                      (max(df$Attendance_Rate...., na.rm = TRUE) - min(df$Attendance_Rate...., na.rm = TRUE))
+
+df$OnlineCourses_norm <- (df$Online_Courses_Completed - min(df$Online_Courses_Completed, na.rm = TRUE)) /
+                         (max(df$Online_Courses_Completed, na.rm = TRUE) - min(df$Online_Courses_Completed, na.rm = TRUE))
+
+
+# ─── View results ──────────────────────────────────────────────────
+
+head(df[, c("Study_Hours_per_Week", "StudyHours_scaled", "StudyHours_norm", 
+            "Exam_Score....", "ExamScore_scaled", "ExamScore_norm",
+            "Attendance_Rate....", "Attendance_scaled", "Attendance_norm")])
+
+```
+
+
+
+```{r}
+
+# ─── For plotting in same graph ──────────────────────────────────────────────────
+
+par(mfrow = c(2, 4))  # 2 rows, 4 columns for plots
+
+
+# ─── Original ───────────────────────────────────────────────────────────────────────────────────────────────────
+hist(df$Study_Hours_per_Week, main = "Original: Study Hours", col = "skyblue", xlab = "Study Hours", cex.main = 0.9)
+hist(df$Exam_Score...., main = "Original: Exam Score", col = "salmon", xlab = "Exam Score", cex.main = 0.9)
+hist(df$Attendance_Rate...., main = "Original: Attendance", col = "lightgreen", xlab = "Attendance", cex.main = 0.9)
+hist(df$Online_Courses_Completed, main = "Original: Online Course", col = "purple", xlab = "Courses Completed", cex.main = 0.9)
+
+
+par(mfrow = c(2, 4))  # 2 rows, 4 columns for plots
+
+
+# ─── Scaling ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+hist(df$StudyHours_scaled, main = "Scaling: Study Hours", col = "skyblue", xlab = "Study Hours", cex.main = 0.9)
+hist(df$ExamScore_scaled, main = "Scaling: Exam Score", col = "salmon", xlab = "Exam Score", cex.main = 0.9)
+hist(df$Attendance_scaled, main = "Scaling: Attendance", col = "lightgreen", xlab = "Attendance", cex.main = 0.9)
+hist(df$OnlineCourses_scaled, main = "Scaling: Online Course", col = "purple", xlab = "Courses Completed", cex.main = 0.9)
+
+# ─── Normalized ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+hist(df$StudyHours_norm, main = "Normalized: Study Hours", col = "skyblue", xlab = "0–1 Scale", cex.main = 0.9)
+hist(df$ExamScore_norm, main = "Normalized: Exam Score", col = "salmon", xlab = "0–1 Scale", cex.main = 0.9)
+hist(df$Attendance_norm, main = "Normalized: Attendance", col = "lightgreen", xlab = "0–1 Scale", cex.main = 0.9)
+hist(df$OnlineCourses_norm, main = "Normalized: Online Course", col = "purple", xlab = "0–1 Scale", cex.main = 0.9)
+
+
+
+```
+
+
+
+```{r}
+par(mfrow = c(2, 3))  # Side-by-side plots
+
+# ─── Original ──────────────────────────────────────────────────────────────────────
+plot(df$Study_Hours_per_Week, df$ExamScore, main = "Original", cex.main = 0.9,
+     xlab = "Study Hours", ylab = "Exam Score", col = "blue", pch = 16)
+
+# ─── Scaling ────────────────────────────────────────────────────────────────────────
+plot(df$StudyHours_scaled, df$ExamScore_scaled, main = "Scaled", cex.main = 0.9,
+     xlab = "Study Hours (0–1)", ylab = "Exam Score (0–1)", col = "red", pch = 16)
+
+# ─── Normalized ──────────────────────────────────────────────────────────────────────
+plot(df$StudyHours_norm, df$ExamScore_norm, main = "Normalized", cex.main = 0.9,
+     xlab = "Study Hours (0–1)", ylab = "Exam Score (0–1)", col = "green", pch = 16)
+
+
+# ─── Boxplot for identifying outliers ──────────────────────────────────────────────────────────────────────
+
+
+boxplot(df$Study_Hours_per_Week, main="Study Hours per week", cex.main = 0.9)
+boxplot(df$StudyHours_scaled, main="Box Plot of Study Hours per Week with outliers", cex.main = 0.9)
+boxplot(df$StudyHours_norm, main="Box Plot of Exam Score with outliers", cex.main = 0.9)
+
+title("Scatter & Boxplots: Original vs Scaled vs Normalized", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+
+# ─── Scatter: Exam_Score.... vs Study_Hours_per_Week ──────────────────────
+
+plot(df$`Exam_Score....`, df$Study_Hours_per_Week,
+     main="Exam Score vs Study Hours per Week", cex.main = 0.9, 
+     xlab="Exam Score", ylab="Study Hours per Week",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+plot(df$`ExamScore_scaled`, df$StudyHours_scaled,
+     main="Exam Score scaled vs Study Hours per Week scaled", cex.main = 0.9, 
+     xlab="Exam Score scaled", ylab="Study Hours per Week scaled",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+plot(df$`ExamScore_norm`, df$StudyHours_norm,
+     main="Exam Score norm vs Study Hours per Week norm", cex.main = 0.9, 
+     xlab="Exam Score norm", ylab="Study Hours per Week norm",
+     col=colors[df$Final_Grade], pch=19)
+legend("topright", legend=c("Grade A", "Grade B", "Grade C", "Grade D"),
+       col=colors, pch=19)
+
+
+title("Scatter: Exam Score scaled/norm vs Study Hours scaled/norm", outer = TRUE, line = -1.2, cex.main = 1.5)
+
+
+```
+
+## Part - 5: Outlier Detection
+
+#Injection of outliers
+
+```{r}
+
+
+# ─── Function to inject outliers into a numeric column ──────────────────────────────────────────────────────────────────────
+inject_outliers_percent <- function(column, percent = 0.05, range = c(150, 200)) {
+  n <- floor(length(column) * percent)       # How many outliers to inject
+  idx <- sample(seq_along(column), n)        # Random indices to inject
+  column[idx] <- runif(n, min = range[1], max = range[2])  # Inject values within range
+  return(column)
+}
+
+
+# ─── Creating a copy of original dataset to keep it safe ──────────────────────────────────────────────────────────────────────
+df_outlier_injected <- df
+
+
+# ─── Inject outliers with custom percent and range ──────────────────────────────────────────────────────────────────────
+df_outlier_injected$Age <- inject_outliers_percent(df_outlier_injected$Age, percent = 0.03, range = c(60, 80))
+df_outlier_injected$Study_Hours_per_Week <- inject_outliers_percent(df_outlier_injected$Study_Hours_per_Week, percent = 0.03, range = c(100, 120))
+df_outlier_injected$Exam_Score.... <- inject_outliers_percent(df_outlier_injected$Exam_Score...., percent = 0.03, range = c(150, 200))
+df_outlier_injected$Time_Spent_on_Social_Media..hours.week. <- inject_outliers_percent(df_outlier_injected$Time_Spent_on_Social_Media..hours.week., percent = 0.03, range = c(70, 90))
+
+```
+
+```{r}
+head(df_outlier_injected)
+```
+
+
+
+#Identifcation of outliers by boxplots
+```{r}
+
+# ─── Boxplot for identifying outliers ──────────────────────────────────────────────────────────────────────
+
+par(mfrow = c(2, 3))  # Side-by-side plots
+
+boxplot(df_outlier_injected$Age, main="Box Plot of Age with outliers")
+boxplot(df_outlier_injected$Study_Hours_per_Week, main="Box Plot of Study Hours per Week with outliers")
+boxplot(df_outlier_injected$Exam_Score...., main="Box Plot of Exam Score with outliers")
+boxplot(df_outlier_injected$Time_Spent_on_Social_Media..hours.week., main="Box Plot of Time Spent on Social Media with outliers")
+
+```
+
+
+```{r}
+
+# ─── Function to find and print outliers in a numeric column ──────────────────
+find_outliers <- function(df, column_name) {
+  col <- df[[column_name]]
+  Q1 <- quantile(col, 0.25, na.rm = TRUE)
+  Q3 <- quantile(col, 0.75, na.rm = TRUE)
+  IQR_val <- Q3 - Q1
+  lower <- Q1 - 1.5 * IQR_val
+  upper <- Q3 + 1.5 * IQR_val
+  outlier_indices <- which(col < lower | col > upper)
+  outlier_values <- col[col < lower | col > upper]
+  cat("\nOutliers in", column_name, ":\n")
+  print(outlier_values)
+  print(df[outlier_indices, ])
+}
+ 
+
+# ─── Apply the function to selected numeric columns ──────────────────
+numeric_columns <- c("Age", 
+                     "Study_Hours_per_Week", 
+                     "Exam_Score....", 
+                     "Time_Spent_on_Social_Media..hours.week.")
+ 
+for (col in numeric_columns) {
+  find_outliers(df_outlier_injected, col)
+}
+```
+
+
+# Handline Outliers
+
+
+```{r}
+
+par(mfrow = c(2, 3))  # Side-by-side plots
+
+# ─── Function to remove outliers from a single column using IQR ──────────────────
+
+remove_outliers <- function(df, column_name) {
+  col <- df[[column_name]]
+  Q1 <- quantile(col, 0.25, na.rm = TRUE)
+  Q3 <- quantile(col, 0.75, na.rm = TRUE)
+  IQR_val <- Q3 - Q1
+  lower <- Q1 - 1.5 * IQR_val
+  upper <- Q3 + 1.5 * IQR_val
+  
+  # Keeping only rows where column values are within bounds
+  df <- df[col >= lower & col <= upper | is.na(col), ]
+  return(df)
+}
+
+par(mfrow = c(2, 3))  # Side-by-side plots# Making a copy so original dataset remains unchanged
+df_outlier_removed <- df_outlier_injected
+
+
+
+# ─── Appliying outlier removal for each column ──────────────────
+
+for (col in numeric_columns) {
+  df_outlier_removed <- remove_outliers(df_outlier_removed, col)
+}
+
+
+# ─── Create boxplots for each selected column ──────────────────
+
+boxplot(df_outlier_removed$Age,
+        main = "Boxplot of Age",
+        col = "skyblue", border = "black")
+
+boxplot(df_outlier_removed$Study_Hours_per_Week,
+        main = "Boxplot of Study Hours/Week",
+        col = "lightgreen", border = "black")
+
+boxplot(df_outlier_removed$Exam_Score....,
+        main = "Boxplot of Exam Score",
+        col = "salmon", border = "black")
+
+boxplot(df_outlier_removed$Time_Spent_on_Social_Media..hours.week.,
+        main = "Boxplot of Time on Social Media",
+        col = "lightyellow", border = "black")
+
+```
 
